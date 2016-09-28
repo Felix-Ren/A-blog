@@ -1,0 +1,193 @@
+<!doctype html>
+
+<html>
+
+<head>
+	<meta charset="utf-8"/>
+	<title>Log-in</title>
+
+	<style>
+		
+<!-- 		figure{
+			margin: auto;
+		}
+		img{
+			margin: auto;
+		}
+		header{
+			float:left;
+			padding: 10px;
+		}
+
+		section{
+			float: left;
+			border-left: 2px solid black;
+			padding-left: 50px;
+			padding-top: 10px;
+			height: 150px;
+		}
+		[type="button"], [type="reset"], [type = "submit"]{
+			width: 80px;
+		}
+
+ -->	
+	figure{
+		margin: auto;
+	}
+	img{
+		height: 400px;
+		width: 400px;
+		margin: auto;
+		position: absolute;
+		z-index: 2;
+	}
+	img:hover{
+		width: 450px;
+		height: 450px;
+		border: 3px solid red;
+	}
+	header{
+		float:left;
+		padding: 10px;
+			
+		margin-top: 440px;
+	}
+	section{
+		float: left;
+		border-left: 2px solid black;
+		padding-left: 50px;
+		height: 150px;
+		margin-top: 450px;
+	}
+	[type="button"], [type="reset"]{
+		width: 80px;
+	}
+	
+	.red{
+		color: red;
+	}	
+	</style>
+	
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.7.1.min.js"></script>
+	<script>
+
+	$(document).ready(function() {
+		interval = setInterval(switchPic, 20000);
+		switchPic();
+		
+		// stop the animation of pictures when mouse enter.
+		$("img").mouseover(function(){
+			clearInterval(interval);
+			clearTimeout(timer1);
+			clearTimeout(timer2);
+			clearTimeout(timer3);
+			clearTimeout(timer4);
+			clearTimeout(timer5);
+		});
+		
+		// resumes the animation of pictures when mouse leaves.
+		$("img").mouseout(function(){
+			interval = setInterval(switchPic, 20000);
+			switchPic();
+		});
+		
+		$('#login').click( // run this function when login button clicked
+			function(){
+	
+			// collect user's input;
+			var user = $("#username").val();
+			var pass1 = $("#password1").val();
+			var pass2 = $("#password2").val();
+		
+			// check if all fields are filled.
+			if(user !== "" && pass1 !== "" && pass2 !== ""){
+				
+				// Check if two passwords match 
+				if(pass1 !== pass2){ 
+					$("#error").html("Your password input did not match.<br/>Please try again below.")
+				} else{ // now all blanks filled and password input matches.
+					// check if the username exists
+					$.ajax({
+						url: 'new_user_verify.php', // URL of our script
+						data: {username: user, password: pass1}, // only need to pass one password since they are the same.
+						type: 'post', // the method of PHP submission
+						success: function(result){ // function to execute upon output
+							// check if there is a match in database according to feedback
+							if(result === "success"){
+								// Store the functional username for reference in essay page.
+								document.cookie = "username=" + user + ";";
+								document.cookie = "displayed=false;";
+							
+								// direct the user to the essay page.
+								$(location).attr('href', 'http://www.pic.ucla.edu/~feiren1995/final_project/essay_page.php');
+							} else if(result === "failure"){
+								$("#error").html("The username you input has been taken.<br/>Please try again below.")
+							}
+						}
+					});  
+			
+				}
+		
+			} else { // User left at least one blank unfilled.
+				$("#error").html("You have to fill out all blanks.")
+			}
+			
+			
+			
+			} 
+		);
+	});
+	
+	
+	function switchPic(){
+	
+		timer1 = setTimeout(function(){$("#img1").css("z-index", 1)}, 4000);
+		timer2 = setTimeout(function(){$("#img2").css("z-index", 1)}, 8000);
+		timer3 = setTimeout(function(){$("#img3").css("z-index", 1)}, 12000);
+		timer4 = setTimeout(function(){$("#img4").css("z-index", 1)}, 16000);
+		timer5 = setTimeout(function(){$("img").css("z-index", 2)}, 20000);	
+	}
+
+	</script>
+</head>
+
+<body>
+<figure>
+
+	<img src = "IMG_3285.JPG" id="img5" alt = "top photo5"/>
+	<img src = "IMG_0954.JPG" id="img4" alt = "top photo4"/>
+	<img src = "IMG_0851.JPG" id="img3" alt = "top photo3"/>
+	<img src = "IMG_3122.JPG" id="img2" alt = "top photo2"/>
+	<img src = "IMG_3290.JPG" id="img1" alt = "top photo1"/>
+
+</figure>
+
+<header>
+	<h1>Felix's Travel Notes</h1>
+	<h2>-- Some reflections from trip to Mid-Europe</h2>
+</header>
+
+<section>
+	<p id = "error" class = "red">
+	</p>
+	<form>
+	<div>
+		<label for="username">New username: </label>
+		<input type = "text" id = "username" required/>
+	</div><div>
+		<label for="password">New password: </label>
+		<input type = "password" id = "password1" required/>
+	</div><div>
+		<label for="password">New password: </label>
+		<input type = "password" id = "password2" required/>
+	</div>
+	<input type="button" value = "login" id = "login"/>
+	<input type="reset" value = "Reset"/>
+	</div>
+	</form>
+	
+	<p><i>* You need to login to post comments or rate existing articles.</i>
+	</p>
+</section>
+</body>
+</html>
